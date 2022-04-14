@@ -245,6 +245,7 @@ async def juju_show_unit(
     """Helper function for obtaining output of `juju show-unit`.
 
     Args:
+        ops_test: pytest-operator fixture,
         unit_name: app name and unit num, e.g. "loki-tester/0".
         endpoint: limit output to relation data for this relation only, e.g. "logging-consumer".
         related_unit: limit output to relation data for this unit only, e.g. "loki/0".
@@ -274,8 +275,8 @@ async def juju_show_unit(
     #   - endpoint: logging-consumer
     #     related-endpoint: logging
     #     application-data:
-    #       endpoints: '[{"url": "http://loki-k8s-0.loki-k8s-endpoints.welcome.svc.cluster.local:3100/loki/api/v1/push"}]'
-    #       promtail_binary_zip_url: https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip
+    #       endpoints: '[{"url": "http://loki-k8s-0...local:3100/loki/api/v1/push"}]'
+    #       promtail_binary_zip_url: https://.../promtail-linux-amd64.zip
     #     related-units:
     #       loki-k8s/0:
     #         in-scope: true

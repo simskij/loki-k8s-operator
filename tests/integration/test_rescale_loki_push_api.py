@@ -78,8 +78,8 @@ async def test_requirer_has_loki_endpoint(ops_test: OpsTest):
     #             "endpoint": "logging-consumer",
     #             "related-endpoint": "logging",
     #             "application-data": {
-    #                 "endpoints": '[{"url": "http://loki-k8s-0.loki-k8s-endpoints.welcome.svc.cluster.local:3100/loki/api/v1/push"}]',
-    #                 "promtail_binary_zip_url": "https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip",
+    #                 "endpoints": '[{"url": "http://loki-k8s-0...local:3100/loki/api/v1/push"}]',
+    #                 "promtail_binary_zip_url": "https://.../promtail-linux-amd64.zip",
     #             },
     #         }
     #     ],
