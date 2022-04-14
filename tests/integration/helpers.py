@@ -232,3 +232,59 @@ def oci_image(metadata_file: str, image_name: str) -> str:
         raise ValueError("Upstream source not found")
 
     return upstream_source
+
+
+async def juju_show_unit(
+    ops_test: OpsTest,
+    unit_name: str,
+    *,
+    endpoint: str = None,
+    related_unit: str = None,
+    app_data_only: bool = False,
+) -> dict:
+    """Helper function for obtaining output of `juju show-unit`.
+
+    Args:
+        unit_name: app name and unit num, e.g. "loki-tester/0".
+        endpoint: limit output to relation data for this relation only, e.g. "logging-consumer".
+        related_unit: limit output to relation data for this unit only, e.g. "loki/0".
+        app_data_only: limit output to application relation data.
+
+    See https://github.com/juju/python-libjuju/issues/642.
+    """
+    endpoint_arg = f"--endpoint {endpoint}" if endpoint else ""
+    related_unit_arg = f"--related-unit {related_unit}" if related_unit else ""
+    app_data_arg = "--app" if app_data_only else ""
+    cmd = filter(
+        None,
+        f"juju show-unit {unit_name} {endpoint_arg} {related_unit_arg} {app_data_arg}".split(" "),
+    )
+
+    retcode, stdout, stderr = await ops_test.run(*cmd)
+    assert retcode == 0, f"`juju show-unit` failed: {(stderr or stdout).strip()}"
+
+    # Response looks like this:
+    #
+    # $ juju show-unit grafana-agent-k8s/0
+    # grafana-agent-k8s/0:
+    #   opened-ports: []
+    #   charm: ch:amd64/focal/grafana-agent-k8s-7
+    #   leader: true
+    #   relation-info:
+    #   - endpoint: logging-consumer
+    #     related-endpoint: logging
+    #     application-data:
+    #       endpoints: '[{"url": "http://loki-k8s-0.loki-k8s-endpoints.welcome.svc.cluster.local:3100/loki/api/v1/push"}]'
+    #       promtail_binary_zip_url: https://github.com/grafana/loki/releases/download/v2.4.1/promtail-linux-amd64.zip
+    #     related-units:
+    #       loki-k8s/0:
+    #         in-scope: true
+    #         data:
+    #           egress-subnets: 10.152.183.143/32
+    #           ingress-address: 10.152.183.143
+    #           private-address: 10.152.183.143
+    #   provider-id: grafana-agent-k8s-0
+    #   address: 10.1.50.210
+
+    # Return the dict without the top-level key (which is the unit itself)
+    return yaml.safe_load(stdout)[unit_name]
