@@ -1250,7 +1250,6 @@ class LokiPushApiProvider(RelationManagerBase):
                 charm must update its relation data.
         """
         self._update_alert_rules(event.relation)
-        self._check_alert_rules()
 
     def _process_logging_relation_changed(self, relation: Relation):
         """Handle changes in related consumers.
