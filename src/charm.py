@@ -15,6 +15,7 @@ develop a new k8s charm using the Operator Framework:
 import logging
 import os
 import textwrap
+import cProfile
 
 import yaml
 from charms.alertmanager_k8s.v0.alertmanager_dispatch import AlertmanagerConsumer
@@ -239,4 +240,9 @@ class LokiOperatorCharm(CharmBase):
 
 
 if __name__ == "__main__":
-    main(LokiOperatorCharm)
+    prof = cProfile.Profile()
+    try:
+        prof.run('main(LokiOperatorCharm)')
+    finally:
+        prof.print_stats()
+    
